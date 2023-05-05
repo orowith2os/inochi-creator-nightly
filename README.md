@@ -1,4 +1,6 @@
-# Inochi Creator
+# Inochi Creator Nightly Builds
+
+This build system is based on the [flatpak-remote](https://github.com/TheEvilSkeleton/flatpak-remote) proyect.
 
 ## update-dependencies.sh script
 
