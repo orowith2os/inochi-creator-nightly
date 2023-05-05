@@ -2,10 +2,15 @@ import yaml
 import sys
 
 yaml_path = sys.argv[1]
+ext = len(sys.argv) > 2 and sys.argv == "ext" 
 
 data = {}
 with open(yaml_path, "r") as f:
     data = yaml.safe_load(f)
+
+if ext:
+    print(data["commit"])
+    exit(0)
 
 sources = []
 

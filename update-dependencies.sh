@@ -7,6 +7,7 @@ source ./scripts/semver.sh
 CHECKOUT_TARGET=
 NIGHTLY=0
 VERIFY_CREATOR=1
+EXT_CREATOR=
 
 # Parse options
 for i in "$@"; do
@@ -19,17 +20,22 @@ on a file ready to be used by flatpak-builder.
 By default it uses the version defined by the commit hash defined in the
 ./com.inochi2d.inochi-creator.yml file
 
-    --target=<string>   Checkout a specific hash/tag/branch instead of
-                        reading the one defined on the yaml file.
-    --nightly           Will checkout the latest commit from all 
-                        dependency repositories.
-    --force             Skip verification.
-    --help              Display this help and exit
+    --target=<string>       Checkout a specific hash/tag/branch instead of
+                            reading the one defined on the yaml file.
+    --ext-creator=<string>  Search creator commit in external file
+    --nightly               Will checkout the latest commit from all 
+                            dependency repositories.
+    --force                 Skip verification.
+    --help                  Display this help and exit
 EOL
             exit 0
             ;;
         -t=*|--target=*)
             CHECKOUT_TARGET="${i#*=}"
+            shift # past argument=value
+            ;;
+        -e=*|--ext-creator=*)
+            EXT_CREATOR="${i#*=}"
             shift # past argument=value
             ;;
         -n|--nightly)
@@ -49,7 +55,11 @@ done
 
 echo "### Verification Stage"
 if [ -z ${CHECKOUT_TARGET} ]; then
-    CHECKOUT_TARGET=$(python3 ./scripts/find-creator-hash.py ./com.inochi2d.inochi-creator.yml)
+    if [ -z ${EXT_CREATOR} ]; then
+        CHECKOUT_TARGET=$(python3 ./scripts/find-creator-hash.py ./com.inochi2d.inochi-creator.yml)
+    else
+        CHECKOUT_TARGET=$(python3 ./scripts/find-creator-hash.py ${EXT_CREATOR} ext)
+    fi
 fi
 
 # Verify that we are not repeating work 
