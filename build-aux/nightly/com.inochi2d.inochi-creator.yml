@@ -36,15 +36,20 @@ modules:
       append-path: /usr/lib/sdk/ldc/bin
     build-commands:
       - chmod +x ./gentl.sh; ./gentl.sh
-      - dub add-path .flatpak-dub;
-        dub build --skip-registry=all --config=meta;
-        dub build --skip-registry=all --build=release --config=linux-nightly --debug=InExperimental
+      - git clone https://github.com/Inochi2D/i2d-imgui.git --recurse-submodules;
+        git clone https://github.com/Inochi2D/inochi2d.git;
+        git clone https://github.com/Inochi2D/dcv-i2d;
+        dub add-local i2d-imgui/ "0.8.0";
+        dub add-local inochi2d/ "0.8.0";
+        dub add-local dcv-i2d/ "0.3.0";
+        dub build --config=meta;
+        dub build --config=linux-nightly --debug=InExperimental
       - install -m 755 ./out/inochi-creator /app/bin/inochi-creator
       - install -Dm644 ./out/*.mo /app/bin
 
     sources:
-      - dub-add-local-sources.json
-      - latest-creator.yml
+      - type: dir
+        path: ../.. # The root of the Inochi Creator repo
 
   - name: Metadata
     buildsystem: simple

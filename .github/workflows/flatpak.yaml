@@ -1,5 +1,5 @@
 # Based on https://raw.githubusercontent.com/gasinvein/proton-flatpak/7962b87cf0d079998ea861e1a358fa93d63af7e5/.github/workflows/flatpak.yml
-name: Flatpak
+name: Nightly Flatpak
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 env:
   APP_ID: com.inochi2d.inochi-creator
-  MANIFEST_PATH: com.inochi2d.inochi-creator.yml
+  MANIFEST_PATH: build-aux/nightly/com.inochi2d.inochi-creator.yml
   FLATPAK_BUNDLE: inochi-creator
   FLATPAK_BRANCH: nightly
   #FIXME: Change this when exporting
