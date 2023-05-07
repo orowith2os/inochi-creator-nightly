@@ -2,12 +2,51 @@
 
 This build system is based on the [flatpak-remote](https://github.com/TheEvilSkeleton/flatpak-remote) proyect.
 
-## update-dependencies.sh script
+## Installation
+
+Make sure to have the [Flathub remote](https://flatpak.org/setup/) added.
+
+```
+flatpak remote-add tenacity oci+https://tenacityteam.github.io/tenacity-flatpak-nightly
+flatpak install tenacity org.tenacityaudio.Tenacity
+```
+
+(Use `--user` flag in all commands to install per user.)
+
+## How does this work
+
+There are 2 workflows that do the heavy lifting.
+
+### update.yaml
+
+This workflow runs the `update-creator.sh` and `update-dependencies.sh` scripts, which updates the 
+`dub-add-local-sources.json` and the `latest-creator.yml` files. If those files suffer changes, 
+they are commited to the main branch.
+
+This workflow runs once each day and can get triggered manually.
+
+### flatpak.yaml
+
+This workflow was imported from [flatpak-remote](https://github.com/TheEvilSkeleton/flatpak-remote).
+This process is expected to build the flatpak package and push it to the registry.
+
+It's run whenever the `main` branch is updated, expected to be triggered by the previous process on
+update. 
+
+## Scripts
+
+### update-creator.sh
+
+Simple script that pulls the `inochi-creator` repo and records the latest commit on the `main` 
+branch into the `latest-creator.yml` file.
+
+### update-dependencies.sh
 
 This script will generate the dependency lists for inochi-creator, using as reference the commit hash from the `./com.inochi2d.inochi-creator.yml` file.
 
 ### Verification stage
 * Extract the commit hash from the `./com.inochi2d.inochi-creator.yml` file (`checkout target`)
+  * It can also check the commit hash from an external file (like `latest-creator.yml`) file if the `--ext-creator` is set
 * The next part of the process can be skipped if you use the `-f/--force` argument.
   * If it's not a nightly build and a `.dep_target` file exists.
     * Extract the commit hash from `.dep_target`.

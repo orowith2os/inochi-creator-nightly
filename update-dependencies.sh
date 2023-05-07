@@ -95,7 +95,8 @@ git clone https://github.com/Inochi2D/vmc-d.git
 git clone https://github.com/Inochi2D/inmath.git
 git clone https://github.com/Inochi2D/psd-d.git
 git clone https://github.com/Inochi2D/fghj.git
-git clone https://github.com/Inochi2D/bindbc-imgui.git
+git clone https://github.com/Inochi2D/i2d-imgui.git
+git clone https://github.com/Inochi2D/i2d-opengl.git
 git clone https://github.com/KitsunebiGames/i18n.git i18n-d
 git clone https://github.com/Inochi2D/dportals.git
 
