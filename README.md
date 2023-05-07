@@ -1,14 +1,14 @@
 # Inochi Creator Nightly Builds
 
-This build system is based on the [flatpak-remote](https://github.com/TheEvilSkeleton/flatpak-remote) proyect.
+This build system is based on the [tenacity flatpak nightly](https://github.com/tenacityteam/tenacity-flatpak-nightly) build system.
 
 ## Installation
 
 Make sure to have the [Flathub remote](https://flatpak.org/setup/) added.
 
 ```
-flatpak remote-add tenacity oci+https://tenacityteam.github.io/tenacity-flatpak-nightly
-flatpak install tenacity org.tenacityaudio.Tenacity
+flatpak remote-add gdm-inochi-creator oci+https://grillo-delmal.github.io/ inochi-creator-nightly
+flatpak install gdm-inochi-creator com.inochi2d.inochi-creator
 ```
 
 (Use `--user` flag in all commands to install per user.)
