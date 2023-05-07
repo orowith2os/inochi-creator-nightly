@@ -22,18 +22,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-22.08
+      options: --privileged
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
-
-    - name: Install flatpak-builder
+    - name: Fix git
       run: |
-        set -e
-        sudo add-apt-repository -y ppa:alexlarsson/flatpak
-        sudo apt update -y
-        sudo apt install -y flatpak-builder
+        git config --global --add safe.directory /__w/${{ env.DESTINATION_REPOSITORY_NAME }}/${{ env.DESTINATION_REPOSITORY_NAME }}
 
     - name: Dump canonical manifest
       run: |
@@ -48,7 +47,7 @@ jobs:
         flatpak-builder --default-branch=${FLATPAK_BRANCH} --download-only /dev/null ${MANIFEST_PATH}
 
     - name: Prime cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           .flatpak-builder/ccache
@@ -62,10 +61,12 @@ jobs:
         flatpak-builder --default-branch=${FLATPAK_BRANCH} --disable-updates --disable-download --ccache --sandbox --repo=${FLATPAK_BUILD_REPO} ${FLATPAK_BUILD_DIR} ${MANIFEST_PATH}
 
     - name: Upload flatpak repo
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ env.FLATPAK_BUILD_REPO }}
-        path: ${{ env.FLATPAK_BUILD_REPO }}
+        path: |
+          ${{ env.FLATPAK_BUILD_REPO }}
+          !${{ env.FLATPAK_BUILD_REPO }}/.lock
 
   publish-bundle:
     runs-on: ubuntu-latest
@@ -77,8 +78,6 @@ jobs:
     - name: Install flatpak
       run: |
         set -e
-        sudo add-apt-repository -y ppa:alexlarsson/flatpak
-        sudo apt update -y
         sudo apt install -y flatpak
 
     - name: Download flatpak repo
@@ -110,10 +109,6 @@ jobs:
       run: |
         set -e
         . /etc/os-release
-        sudo sh -c "echo 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list"
-        curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-        sudo add-apt-repository -y ppa:alexlarsson/flatpak
-        sudo apt update -y
         sudo apt install -y skopeo flatpak jq
 
     - name: Download flatpak repo
