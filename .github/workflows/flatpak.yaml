@@ -145,9 +145,19 @@ jobs:
         export DOCKER="$(skopeo inspect docker://ghcr.io/$IMAGE_REPOSITORY:$FLATPAK_BRANCH | jq --arg github_repository "$GITHUB_REPOSITORY" '. as $img | { "Name": $github_repository, "Images": [$img] }')"
         set -e
         git clone -b gh-pages https://github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git gh-pages
-        cat gh-pages/index/static | jq --argjson docker "$DOCKER" '.Results += [ $docker ]' > gh-pages/index/static
+        echo '{"Registry": "https://ghcr.io/","Results": []}' | jq --argjson docker "$DOCKER" '.Results += [ $docker ]' > ./gh-pages/index/static
+
+    - name: Check for changes
+      id: is-updated 
+      run: |
+        set -x
+        git -C ./gh-pages status -s -uno
+        cat gh-pages/index/static
+        # Don't let the file be empty
+        [ ! -s ./gh-pages/index/static ] || [ -z "$(git -C ./gh-pages status -s -uno)" ] || echo "updated=true" >> $GITHUB_OUTPUT
 
     - name: Push to repository
+      if: steps.is-updated.outputs.updated
       uses: cpina/github-action-push-to-another-repository@main
       env:
         API_TOKEN_GITHUB: ${{ secrets.PAT }}
