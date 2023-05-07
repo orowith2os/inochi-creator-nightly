@@ -2,10 +2,9 @@
 name: Flatpak
 
 on:
-##TODO: Uncomment on done
-#  push:
-#    branches:
-#      - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
